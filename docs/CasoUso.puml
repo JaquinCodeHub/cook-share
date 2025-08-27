@@ -1,0 +1,50 @@
+@startuml cookshare
+left to right direction
+!theme plain
+
+' Actores
+actor "Usuario" as User
+actor "Editor" as Editor
+actor "Admin" as Admin
+
+rectangle "Aplicación Recetas Colaborativas" {
+
+    ' Casos de uso Usuario
+    User --> (Registrarse)
+    User --> (Iniciar sesión)
+    User --> (Editar perfil)
+    User --> (Buscar recetas)
+    User --> (Ver detalle de receta)
+    User --> (Comentar receta)
+    User --> (Guardar receta favorita)
+    User --> (Ver favoritos)
+    User --> (Ver notificaciones)
+    
+    ' Casos de uso Editor
+    Editor --> (Crear receta)
+    Editor --> (Editar receta propia)
+    Editor --> (Subir imágenes a receta)
+    Editor --> (Eliminar receta propia)
+    
+    ' Casos de uso Admin
+    Admin --> (Gestionar usuarios)
+    Admin --> (Gestionar roles)
+    Admin --> (Gestionar recetas)
+    Admin --> (Gestionar comentarios)
+    Admin --> (Gestionar ingredientes)
+    Admin --> (Gestionar categorías)
+    Admin --> (Ver dashboard)
+    Admin --> (Ver logs)
+    Admin --> (Gestionar imágenes)
+
+    ' Relaciones de acciones
+    (Crear receta) --> (Agregar ingredientes)
+    (Crear receta) --> (Agregar categoría)
+    (Crear receta) --> (Agregar imágenes)
+    
+    (Ver detalle de receta) --> (Ver comentarios)
+    (Ver detalle de receta) --> (Ver imágenes)
+    (Guardar receta favorita) --> (Ver favoritos)
+}
+
+@enduml

@@ -1,0 +1,95 @@
+@startuml
+!theme plain
+
+class Usuario {
+  - id_usuario : UUID
+  - nombre : String
+  - email : String
+  - contraseña_hash : String
+  - rol : Rol
+  - fecha_registro : DateTime
+  --
+  + crearReceta() : Receta
+  + comentar(receta: Receta, contenido: String) : Comentario
+  + guardarFavorito(receta: Receta) : Favorito
+}
+
+enum Rol {
+  ADMIN
+  EDITOR
+  LECTOR
+}
+
+class Receta {
+  - id_receta : UUID
+  - titulo : String
+  - descripcion : Text
+  - instrucciones : Text
+  - fecha_creacion : DateTime
+  - ultima_edicion : DateTime
+  - publicado : Boolean
+  --
+  + agregarIngrediente(ingrediente: Ingrediente, cantidad: String, unidad: String)
+  + agregarImagen(url: String, descripcion: String)
+  + recibirComentario(comentario: Comentario)
+}
+
+class Ingrediente {
+  - id_ingrediente : UUID
+  - nombre : String
+}
+
+class Categoria {
+  - id_categoria : UUID
+  - nombre : String
+  - descripcion : String
+}
+
+class RecetaIngrediente {
+  - cantidad : String
+  - unidad : String
+}
+
+class Comentario {
+  - id_comentario : UUID
+  - contenido : Text
+  - fecha : DateTime
+}
+
+class Favorito {
+  - fecha_guardado : DateTime
+}
+
+class Imagen {
+  - id_imagen : UUID
+  - url : String
+  - descripcion : String
+  - fecha_subida : DateTime
+}
+
+' -------------------------------
+' Relaciones
+' -------------------------------
+
+Usuario "1" --> "0..*" Receta : crea
+Usuario "1" --> "0..*" Comentario : realiza
+Usuario "1" --> "0..*" Favorito : guarda
+
+Receta "1" --> "0..*" Comentario : recibe
+Receta "1" --> "0..*" Imagen : tiene
+Receta "1" --> "0..*" RecetaIngrediente : usa
+Receta "1" --> "1" Categoria : pertenece
+
+Ingrediente "1" --> "0..*" RecetaIngrediente : participa
+RecetaIngrediente "*" --> "1" Ingrediente
+RecetaIngrediente "*" --> "1" Receta
+
+Favorito "*" --> "1" Receta
+Favorito "*" --> "1" Usuario
+
+Comentario "*" --> "1" Usuario
+Comentario "*" --> "1" Receta
+
+Imagen "*" --> "1" Receta
+
+@enduml

@@ -1,0 +1,83 @@
+@startuml cookshare
+!theme plain
+
+entity "Usuario" as Usuario {
+  *id_usuario : UUID
+  --
+  nombre : String
+  email : String
+  contraseña_hash : String
+  rol : Enum(admin, editor, lector)
+  fecha_registro : DateTime
+}
+
+entity "Receta" as Receta {
+  *id_receta : UUID
+  --
+  titulo : String
+  descripcion : Text
+  instrucciones : Text
+  fecha_creacion : DateTime
+  ultima_edicion : DateTime
+  publicado : Boolean
+}
+
+entity "Ingrediente" as Ingrediente {
+  *id_ingrediente : UUID
+  --
+  nombre : String
+}
+
+entity "Categoria" as Categoria {
+  *id_categoria : UUID
+  --
+  nombre : String
+  descripcion : String
+}
+
+entity "RecetaIngrediente" as RecetaIngrediente {
+  *id_receta : UUID
+  *id_ingrediente : UUID
+  --
+  cantidad : String
+  unidad : String
+}
+
+entity "Comentario" as Comentario {
+  *id_comentario : UUID
+  --
+  contenido : Text
+  fecha : DateTime
+}
+
+entity "Favorito" as Favorito {
+  *id_usuario : UUID
+  *id_receta : UUID
+  --
+  fecha_guardado : DateTime
+}
+
+entity "Imagen" as Imagen {
+  *id_imagen : UUID
+  --
+  url : String
+  descripcion : String
+  fecha_subida : DateTime
+}
+
+' -------------------------------
+' Relaciones
+' -------------------------------
+
+Usuario ||--o{ Receta : "crea"
+Usuario ||--o{ Comentario : "realiza"
+Usuario ||--o{ Favorito : "guarda"
+
+Receta ||--o{ Comentario : "recibe"
+Receta ||--o{ Imagen : "tiene"
+Receta ||--o{ RecetaIngrediente : "usa"
+Receta }o--|| Categoria : "pertenece a"
+
+Ingrediente ||--o{ RecetaIngrediente : "incluye"
+
+@enduml

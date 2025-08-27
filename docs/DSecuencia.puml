@@ -1,0 +1,106 @@
+@startuml cookshare
+title Diagrama de Secuencia Completo - Aplicación Recetas Colaborativas
+
+' Actores y participantes
+actor Usuario
+actor Admin
+participant "Frontend Vue/Nuxt" as Frontend
+participant "API Backend Node.js / Spring Boot" as Backend
+database "Base de Datos" as DB
+participant "Almacenamiento de Imágenes (S3 / Local)" as Storage
+participant "JWT / Auth" as Auth
+
+'================================================================================
+' Login / Autenticación
+'================================================================================
+== Login ==
+Usuario -> Frontend: Ingresar email/password
+Frontend -> Auth: Validar credenciales
+Auth --> Frontend: Token JWT
+Frontend --> Usuario: Sesión iniciada
+
+'================================================================================
+' Creación de receta
+'================================================================================
+== Crear Receta ==
+Usuario -> Frontend: Abrir formulario de creación
+Frontend --> Usuario: Mostrar editor WYSIWYG
+Usuario -> Frontend: Completa datos de receta + imágenes
+Frontend -> Auth: Verificar token JWT
+Frontend -> Backend: POST /recetas + datos de receta
+Backend -> DB: Insertar receta
+Backend -> Storage: Subir imágenes
+Storage --> Backend: URLs de imágenes
+Backend --> DB: Guardar referencias de imágenes
+Backend --> Frontend: Confirmación de receta creada
+Frontend --> Usuario: Mostrar receta creada
+
+'================================================================================
+' Edición y eliminación de receta
+'================================================================================
+== Editar / Eliminar Receta ==
+Usuario -> Frontend: Seleccionar receta propia para editar/eliminar
+Frontend -> Auth: Verificar token JWT
+Frontend -> Backend: PUT / DELETE /recetas/{id}
+Backend -> DB: Actualizar / Eliminar receta
+Backend --> Storage: Eliminar imágenes asociadas (si aplica)
+Backend --> Frontend: Confirmación de acción
+Frontend --> Usuario: Actualizar vista
+
+'================================================================================
+' Comentarios
+'================================================================================
+== Comentar Receta ==
+Usuario -> Frontend: Comentar receta
+Frontend -> Auth: Verificar token JWT
+Frontend -> Backend: POST /recetas/{id}/comentarios
+Backend -> DB: Guardar comentario
+Backend --> Frontend: Confirmación
+Frontend --> Usuario: Mostrar comentario agregado
+
+'================================================================================
+' Favoritos
+'================================================================================
+== Guardar / Quitar Favoritos ==
+Usuario -> Frontend: Guardar receta favorita
+Frontend -> Auth: Verificar token JWT
+Frontend -> Backend: POST / DELETE /recetas/{id}/favoritos
+Backend -> DB: Guardar / Eliminar relación usuario-receta
+Backend --> Frontend: Confirmación
+Frontend --> Usuario: Actualizar lista de favoritos
+
+'================================================================================
+' Administración
+'================================================================================
+== Gestión Admin ==
+Admin -> Frontend: Acceder panel de administración
+Frontend -> Auth: Verificar token JWT y rol Admin
+Frontend -> Backend: GET / POST / PUT / DELETE endpoints de administración
+Backend -> DB: Consultas / Escrituras de usuarios, recetas, comentarios, categorías e ingredientes
+Backend --> Frontend: Respuesta
+Frontend --> Admin: Mostrar resultados en dashboard
+
+'================================================================================
+' Notificaciones
+'================================================================================
+== Notificaciones ==
+Backend -> Frontend: Emitir notificación evento (comentario, receta, favoritos)
+Frontend --> Usuario: Mostrar notificación
+
+'================================================================================
+' Comentarios explicativos
+'================================================================================
+' Este diagrama muestra todos los flujos principales de la aplicación:
+' - Login y autenticación con JWT
+' - CRUD completo de recetas (crear, editar, eliminar)
+' - Comentarios y gestión de favoritos
+' - Gestión administrativa (usuarios, roles, recetas, comentarios, categorías, ingredientes)
+' - Subida y gestión de imágenes en almacenamiento externo
+' - Notificaciones en tiempo real
+' 
+' Los participantes reflejan los módulos principales:
+' Usuario/Admin -> Frontend -> Backend -> DB/Storage/Auth
+' 
+' El diagrama ayuda a visualizar interacciones paso a paso,
+' facilita el desarrollo, pruebas, y planificación de nuevas funcionalidades.
+@enduml
